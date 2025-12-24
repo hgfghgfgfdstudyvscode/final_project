@@ -18,7 +18,6 @@
     if (value === null || value === undefined) return '—';
     const n = Number(value);
     if (!Number.isFinite(n)) return String(value);
-    // 1234567 -> "1 234 567 ₽"
     return n.toLocaleString('ru-RU') + ' ₽';
   }
 
@@ -86,14 +85,12 @@
         return;
       }
 
-      // Backend может вернуть сообщения типа hint/none
       if (data.length && typeof data[0] === 'object' && data[0] && data[0].type) {
         clearTable();
         setMessage(data[0].message || 'Нет данных.');
         return;
       }
 
-      // На всякий случай сортируем по цене (возрастание)
       data.sort((a, b) => {
         const pa = Number(a?.price);
         const pb = Number(b?.price);
@@ -120,6 +117,5 @@
     if (e.key === 'Enter') doSearch();
   });
 
-  // автофокус
   input.focus();
 })();

@@ -60,6 +60,10 @@ def _required_match(query: Mapping[str, Any], attrs: Mapping[str, Any]) -> bool:
             return False
         if query.get("storage") is not None and not _eq(query.get("storage"), attrs.get("storage")):
             return False
+        if query.get("ram") is not None and not _eq(query.get("ram"), attrs.get("ram")):
+            return False
+        if query.get("ram") is not None and not _eq(query.get("ram"), attrs.get("ram")):
+            return False
         ql = _norm_line(cat, query.get("line"))
         il = _norm_line(cat, attrs.get("line"))
         if ql is not None and not _eq(ql, il):
@@ -77,6 +81,10 @@ def _required_match(query: Mapping[str, Any], attrs: Mapping[str, Any]) -> bool:
             return False
         if query.get("storage") is not None and not _eq(query.get("storage"), attrs.get("storage")):
             return False
+        if query.get("ram") is not None and not _eq(query.get("ram"), attrs.get("ram")):
+            return False
+        if query.get("ram") is not None and not _eq(query.get("ram"), attrs.get("ram")):
+            return False
         if query.get("color") is not None and not _eq(query.get("color"), attrs.get("color")):
             return False
         return True
@@ -87,6 +95,10 @@ def _required_match(query: Mapping[str, Any], attrs: Mapping[str, Any]) -> bool:
         if query.get("size") is not None and not _eq(query.get("size"), attrs.get("size")):
             return False
         if query.get("storage") is not None and not _eq(query.get("storage"), attrs.get("storage")):
+            return False
+        if query.get("ram") is not None and not _eq(query.get("ram"), attrs.get("ram")):
+            return False
+        if query.get("ram") is not None and not _eq(query.get("ram"), attrs.get("ram")):
             return False
         if query.get("chip") is not None and not _eq(query.get("chip"), attrs.get("chip")):
             return False

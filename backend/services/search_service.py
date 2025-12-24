@@ -94,6 +94,7 @@ class SearchService:
         size = attrs.get("size")
         chip = attrs.get("chip")
         color = attrs.get("color")
+        ram = attrs.get("ram")
 
         parts: list[str] = []
 
@@ -112,9 +113,11 @@ class SearchService:
             if line:
                 parts.append(str(line))
             if size:
-                parts.append(f'{size}"')
+                parts.append(str(size))
             if chip:
                 parts.append(str(chip).upper())
+            if ram:
+                parts.append(f"{ram}gb")
             if storage:
                 parts.append(self._storage_token(storage))
             parts.extend(_color_tokens(color))
@@ -124,9 +127,11 @@ class SearchService:
             if line and line != "ipad":
                 parts.append(str(line))
             if size:
-                parts.append(f'{size}"')
+                parts.append(str(size))
             if chip:
                 parts.append(str(chip).upper())
+            if ram:
+                parts.append(f"{ram}gb")
             if storage:
                 parts.append(self._storage_token(storage))
             parts.extend(_color_tokens(color))

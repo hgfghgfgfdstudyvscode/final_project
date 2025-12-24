@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apple Devices Search</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: #fff;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    .bg-video {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .wrap {
+      width: min(900px, 92vw);
+      text-align: center;
+
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 32px 28px;
+
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    h1 { margin: 0 0 24px; font-weight: 600; letter-spacing: 0.4px; }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    input, button {
+      font-size: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+    }
+
+    input {
+      width: min(520px, 92vw);
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(0,0,0,0.35);
+      color: #fff;
+      outline: none;
+    }
+
+    input::placeholder { color: rgba(255,255,255,0.65); }
+    input:focus { border-color: rgba(255,255,255,0.8); }
+
+    button {
+      border: 0;
+      background: #fff;
+      color: #000;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover { background: #e5e5e5; }
+
+    #msg { min-height: 1.2em; opacity: 0.95; margin: 6px 0 10px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      text-align: left;
+    }
+
+    th { color: rgba(255,255,255,0.9); font-weight: 600; }
+
+    tr:hover td { background: rgba(255,255,255,0.06); }
+
+    a { color: #fff; }
+
+    .bg-video {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+     }
+
+    .bg-video.loaded {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="/frontend/bg.mp4" type="video/mp4">
+  </video>
+
+  <script>
+    const v = document.querySelector('.bg-video');
+    v.addEventListener('canplay', () => {
+    v.classList.add('loaded');
+      });
+  </script>
+
+  <script>
+      const bgVideo = document.querySelector('.bg-video');
+      bg.Video.playbackRate = 0.2;
+  </script>
+
+  <div class="wrap">
+    <h1>Apple Devices Search</h1>
+
+    <div class="controls">
+      <input
+        id="q"
+        type="text"
+        placeholder="Поиск (например: Iphone 17 pro 512 gb)"
+        autocomplete="off"
+      />
+      <button id="btn" type="button">Найти</button>
+    </div>
+
+    <p id="msg" aria-live="polite"></p>
+
+    <table id="table" hidden>
+      <thead>
+        <tr>
+          <th>Название магазина</th>
+          <th>Название товара</th>
+          <th>Цена</th>
+          <th>Ссылка</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <script src="/frontend/app.js"></script>
+  </div>
+</body>
+</html>

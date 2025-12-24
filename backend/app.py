@@ -18,8 +18,8 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    static_dir = Path(__file__).resolve().parent / "static"
-    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+    static_dir = Path(__file__).resolve().parent / "frontend"
+    app.mount("/frontend", StaticFiles(directory=static_dir), name="frontend")
 
     @app.get("/", include_in_schema=False)
     def index():

@@ -4,18 +4,6 @@ COLORS = {
     "desert_titanium": [
         "desert titanium",
     ],
-    "space_black": [
-        "space black",
-        "spaceblack",
-        "космический черный",
-        "космический чёрный",
-    ],
-    "space_gray": [
-        "space gray",
-        "space grey",
-        "spacegray",
-        "серый космос",
-    ],
     "midnight": [
         "midnight",
         "темная ночь",
@@ -91,6 +79,9 @@ COLORS = {
         "orange",
         "оранжевый",
         "cosmic orange",
+        "оранжевая",
+        "оранжевое",
+        "оранжевые",
     ],
     "red": [
         "red",
@@ -108,6 +99,10 @@ COLORS = {
         "gray",
         "grey",
         "серый",
+        "space gray",
+        "space grey",
+        "spacegray",
+        "серый космос",
     ],
     "white": [
         "white",
@@ -117,6 +112,14 @@ COLORS = {
         "black",
         "черный",
         "чёрный",
+        "space black",
+        "spaceblack",
+        "космический черный",
+        "космический чёрный",
+        "черный космос",
+        "чёрный космос",
+        "черный  космос",
+        "чёрный  космос",
     ],
 }
 

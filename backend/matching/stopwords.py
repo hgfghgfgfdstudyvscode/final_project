@@ -9,4 +9,5 @@ STOP_WORDS = [
     "кейс",
     "case",
     "box",
+    "шнур"
 ]

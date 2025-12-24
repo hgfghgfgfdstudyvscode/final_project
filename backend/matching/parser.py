@@ -19,43 +19,46 @@ def _extract_color(text: str) -> str | None:
 
 
 _IPHONE_RE = re.compile(r"\biphone\b", re.IGNORECASE)
-_IPHONE_MODELS = [str(i) for i in range(17, 13, -1)]
+_IPHONE_MODELS = [str(i) for i in range(17, 12, -1)]
 _IPHONE_MODEL_RE = re.compile(r"\b(" + "|".join(_IPHONE_MODELS) + r")\b")
+
 _IPHONE_LINE_PRO_MAX_RE = re.compile(r"\bpro\s*max\b", re.IGNORECASE)
 _IPHONE_LINE_PRO_RE = re.compile(r"\bpro\b", re.IGNORECASE)
 _IPHONE_LINE_PLUS_RE = re.compile(r"\bplus\b", re.IGNORECASE)
 _IPHONE_LINE_MINI_RE = re.compile(r"\bmini\b", re.IGNORECASE)
 
+
 _MACBOOK_RE = re.compile(r"\bmacbook\b", re.IGNORECASE)
-_MACBOOK_SIZE_RE = re.compile(r"(?<!\d)(13|14|15|16)\"(?![\d\.,])", re.IGNORECASE)
-_MACBOOK_CHIP_RE = re.compile(r"\bm[1-4]\b", re.IGNORECASE)
+_MACBOOK_CHIP_RE = re.compile(r"\bm[1-5]\b", re.IGNORECASE)
 _MACBOOK_LINE_PRO_RE = re.compile(r"\bpro\b", re.IGNORECASE)
 _MACBOOK_LINE_AIR_RE = re.compile(r"\bair\b", re.IGNORECASE)
+
 
 _IPAD_RE = re.compile(r"\bipad\b", re.IGNORECASE)
 _IPAD_LINE_PRO_RE = re.compile(r"\bipad\s*pro\b", re.IGNORECASE)
 _IPAD_LINE_AIR_RE = re.compile(r"\bipad\s*air\b", re.IGNORECASE)
 _IPAD_LINE_MINI_RE = re.compile(r"\bipad\s*mini\b", re.IGNORECASE)
-_IPAD_SIZE_RE = re.compile(r"(?<!\d)(10\.9|11|13)\"(?![\d\.,])", re.IGNORECASE)
-_IPAD_CHIP_RE = re.compile(r"\bm[1-4]\b", re.IGNORECASE)
+_IPAD_CHIP_RE = re.compile(r"\bm[1-5]\b", re.IGNORECASE)
+
 
 _AIRPODS_RE = re.compile(r"\bair\s*pods\b", re.IGNORECASE)
 _AIRPODS_MAX_RE = re.compile(r"\bair\s*pods\s*max\b", re.IGNORECASE)
 _AIRPODS_PRO_RE = re.compile(r"\bair\s*pods\s*pro\b", re.IGNORECASE)
 
-# AirPods Pro поколение: поддерживаем варианты вида
-# - "Pro 2" / "Pro 3"
-# - "2nd" / "2th" / "3rd" (иногда на сайтах встречаются ошибки)
-# - "2-го поколения" / "2го поколения" / "2 поколение"
 _AIRPODS_PRO_MODEL_RE = re.compile(r"\bpro\s*([23])\b", re.IGNORECASE)
 _AIRPODS_ORDINAL_EN_RE = re.compile(r"\b([23])\s*(?:nd|rd|th)\b", re.IGNORECASE)
 _AIRPODS_GEN_EN_RE = re.compile(r"\b([23])\s*gen(?:eration)?\b", re.IGNORECASE)
-_AIRPODS_GEN_RU_RE = re.compile(
-    r"\b([23])\s*(?:-?\s*го)?\s*поколен(?:ие|ия)\b", re.IGNORECASE
-)
-_AIRPODS_MODEL_RE = re.compile(
-    r"\bair\s*pods\s*(?:gen\s*)?([2-4])\b|\b([2-4])\s*gen\b", re.IGNORECASE
-)
+_AIRPODS_GEN_RU_RE = re.compile(r"\b([23])\s*(?:-?\s*го)?\s*поколен(?:ие|ия)\b", re.IGNORECASE)
+_AIRPODS_MODEL_RE = re.compile(r"\bair\s*pods\s*(?:gen\s*)?([2-4])\b|\b([2-4])\s*gen\b", re.IGNORECASE)
+
+
+_RAM_RE = re.compile(r"\b(8|16|24|36|48)\s*gb\b", re.IGNORECASE)
+
+
+_NUMBER_TOKEN_RE = re.compile(r"\b(\d{1,2}(?:[\.,]\d+)?)\b")
+
+_MACBOOK_SIZES = {13, 14, 15, 16}
+_IPAD_SIZES = set(range(7, 14))
 
 
 def _detect_category(text: str) -> str | None:
@@ -70,6 +73,40 @@ def _detect_category(text: str) -> str | None:
     return None
 
 
+def _extract_ram(text: str) -> str | None:
+    m = _RAM_RE.search(text)
+    if not m:
+        return None
+    return m.group(1)
+
+
+def _extract_size_as_int(text: str, allowed: set[int]) -> str | None:
+    for m in _NUMBER_TOKEN_RE.finditer(text):
+        start, end = m.span()
+
+        if start > 0 and text[start - 1] in ("m", "м"):
+            continue
+
+        tail = text[end : end + 8].lower()
+
+        if re.match(r"\s*(gb|гб|tb|тб)\b", tail, flags=re.IGNORECASE):
+            continue
+
+        if tail and tail[0].isalpha():
+            continue
+
+        num_s = m.group(1).replace(",", ".")
+        try:
+            int_part = int(float(num_s))
+        except ValueError:
+            continue
+
+        if int_part in allowed:
+            return str(int_part)
+
+    return None
+
+
 def parse_text(text: str) -> Dict[str, Any]:
     text = _normalize_text(text)
 
@@ -78,6 +115,7 @@ def parse_text(text: str) -> Dict[str, Any]:
         "model": None,
         "line": None,
         "storage": None,
+        "ram": None,
         "color": None,
         "size": None,
         "chip": None,
@@ -85,6 +123,8 @@ def parse_text(text: str) -> Dict[str, Any]:
 
     category = _detect_category(text)
     result["category"] = category
+
+    result["ram"] = _extract_ram(text)
 
     if category == "iphone":
         m = _IPHONE_MODEL_RE.search(text)
@@ -112,9 +152,7 @@ def parse_text(text: str) -> Dict[str, Any]:
             result["chip"] = chip
             result["model"] = chip
 
-        sm = _MACBOOK_SIZE_RE.search(text)
-        if sm:
-            result["size"] = sm.group(1)
+        result["size"] = _extract_size_as_int(text, _MACBOOK_SIZES)
 
     elif category == "ipad":
         if _IPAD_LINE_PRO_RE.search(text):
@@ -126,9 +164,7 @@ def parse_text(text: str) -> Dict[str, Any]:
         else:
             result["line"] = "ipad"
 
-        sm = _IPAD_SIZE_RE.search(text)
-        if sm:
-            result["size"] = sm.group(1)
+        result["size"] = _extract_size_as_int(text, _IPAD_SIZES)
 
         cm = _IPAD_CHIP_RE.search(text)
         if cm:
@@ -143,7 +179,6 @@ def parse_text(text: str) -> Dict[str, Any]:
             result["line"] = "airpods"
 
         if result["line"] == "pro":
-            # Пытаемся вытащить поколение Pro более "толерантно" к написанию на сайтах
             for rx in (
                 _AIRPODS_PRO_MODEL_RE,
                 _AIRPODS_ORDINAL_EN_RE,
